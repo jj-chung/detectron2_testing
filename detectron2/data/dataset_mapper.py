@@ -188,8 +188,8 @@ class DatasetMapper:
             w = bbox[2]
             h = bbox[3]
 
-            for i in range(y,y+h):
-              for j in range(x,x+w):
+            for i in range(y + 1,y + h - 1):
+              for j in range(x + 1,x + w - 1):
                 mask[i,j] = 255
             
           return mask
