@@ -152,7 +152,7 @@ class DatasetMapper:
         # substring after the last /
         img_name = img_path[img_path.rindex("/")+1:]
         prev_img_name = self.curr_to_prev_filename[img_name]
-        prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+        # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
         i = self.dataset_dicts_index(self.dataset_dicts, prev_img_name)
@@ -224,7 +224,7 @@ class DatasetMapper:
         # substring after the last /
         img_name = img_path[img_path.rindex("/")+1:]
         prev_img_name = self.curr_to_prev_filename[img_name]
-        prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+        # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
         i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
