@@ -163,7 +163,7 @@ class DatasetMapper:
         mask = np.zeros([height, width])
 
         if i == -1: # If the previous image is null 
-          print("Previous image is null.")
+          # print("Previous image is null.")
           return mask
         else: # If the previous image is not null
           # Get the dictionary and annotations
