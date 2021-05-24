@@ -154,7 +154,7 @@ class DatasetMapper:
 
         # Default prev_img_name if the key doesn't exist in curr_to_prev
         # Necessary when creating the mapper for the test data
-        if img_name in curr_to_prev_filename:
+        if img_name in self.curr_to_prev_filename:
             prev_img_name = self.curr_to_prev_filename[img_name]
             # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
         else:
@@ -232,7 +232,7 @@ class DatasetMapper:
 
         # Default prev_img_name if the key doesn't exist in curr_to_prev
         # Necessary when creating the mapper for the test data
-        if img_name in curr_to_prev_filename:
+        if img_name in self.curr_to_prev_filename:
             prev_img_name = self.curr_to_prev_filename[img_name]
             # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
         else:
