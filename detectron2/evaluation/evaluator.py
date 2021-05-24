@@ -151,9 +151,14 @@ def inference_on_dataset(
                 total_compute_time = 0
 
             start_compute_time = time.perf_counter()
+            ## outputs contains an 'instances' key w Instances(...fields = [pred_boxes:]) value
             outputs = model(inputs)
             print('Printing outputs...')
             print(outputs)
+            instances_obj = outputs[0]['instances'] 
+            boxes_tensor = instances_obj.pred_boxes
+            print('Printing boxes tensor...')
+            print(boxes_tensor)
 
             ## At this point, feed the outputs of the prediction to the 
             ## DatasetMapper associated with the data_loader. Specifically change
@@ -177,9 +182,11 @@ def inference_on_dataset(
 
                     old_dataset_dicts = old_dataset_dicts[:idx] + \
                         [temp_dataset_dict] + old_dataset_dicts[idx + 1:]
+                    break
 
                 idx += 1
 
+            data_loader.mapper.dataset_dicts = old_dataset_dicts
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()

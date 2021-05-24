@@ -281,7 +281,9 @@ class DefaultPredictor:
         outputs = pred(inputs)
     """
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, dataset_dicts=None, curr_to_prev_filename=None,
+        curr_to_prev_img_id=None):
+
         self.cfg = cfg.clone()  # cfg can be modified by model
         self.model = build_model(self.cfg)
         self.model.eval()
@@ -290,6 +292,10 @@ class DefaultPredictor:
 
         checkpointer = DetectionCheckpointer(self.model)
         checkpointer.load(cfg.MODEL.WEIGHTS)
+
+        # Changed parameters for build_train_loader in this class
+        data_loader = self.build_train_loader(cfg, dataset_dicts, curr_to_prev_filename, 
+            curr_to_prev_img_id)
 
         self.aug = T.ResizeShortestEdge(
             [cfg.INPUT.MIN_SIZE_TEST, cfg.INPUT.MIN_SIZE_TEST], cfg.INPUT.MAX_SIZE_TEST
@@ -316,10 +322,35 @@ class DefaultPredictor:
             height, width = original_image.shape[:2]
             image = self.aug.get_transform(original_image).apply_image(original_image)
             image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))
+            print('Printing DefaultPredicor image and size...')
+            print(image)
+            print(list(image.size()))
+
+            ## May need to change the format of image to match the updated model which
+            ## only accepts 4 channel images.
 
             inputs = {"image": image, "height": height, "width": width}
             predictions = self.model([inputs])[0]
             return predictions
+
+
+    @classmethod
+    def build_train_loader(cls, cfg, dataset_dicts, curr_to_prev_filename, 
+        curr_to_prev_img_id):
+        """
+        Returns:
+            iterable
+
+        It now calls :func:`detectron2.data.build_detection_train_loader`.
+        Overwrite it if you'd like a different data loader.
+        """
+        mapper = DatasetMapper(cfg, 
+            dataset_dicts=dataset_dicts, 
+            curr_to_prev_filename = curr_to_prev_filename,
+            curr_to_prev_img_id = curr_to_prev_img_id)
+
+        # print(mapper.curr_to_prev_img_id)
+        return build_detection_train_loader(cfg, mapper=mapper)
 
 
 class DefaultTrainer(TrainerBase):
