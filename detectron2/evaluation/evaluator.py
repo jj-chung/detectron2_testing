@@ -152,6 +152,7 @@ def inference_on_dataset(
 
             start_compute_time = time.perf_counter()
             outputs = model(inputs)
+            print('Printing outputs...')
             print(outputs)
 
             ## At this point, feed the outputs of the prediction to the 
