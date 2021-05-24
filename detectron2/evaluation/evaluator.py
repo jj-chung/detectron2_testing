@@ -143,6 +143,8 @@ def inference_on_dataset(
             stack.enter_context(inference_context(model))
         stack.enter_context(torch.no_grad())
 
+        ## Note: enumerate(data_loader) results in 1-item list of data_dict
+        ## for each test image.
         for idx, inputs in enumerate(data_loader):
             if idx == num_warmup:
                 start_time = time.perf_counter()
@@ -150,6 +152,34 @@ def inference_on_dataset(
 
             start_compute_time = time.perf_counter()
             outputs = model(inputs)
+            print(outputs)
+
+            ## At this point, feed the outputs of the prediction to the 
+            ## DatasetMapper associated with the data_loader. Specifically change
+            ## the 'annotations' entry in the dataset_dicts field of the DatasetMapper
+            img_filename = inputs[0]['file_name']
+            old_dataset_dicts = data_loader.dataset_dicts
+
+            idx = 0
+            for d in old_dataset_dicts:
+                dict_img_path = d["file_name"]
+                # dict_img_name = dict_img_path[dict_img_path.rindex("/")+1:]
+                dict_img_name = dict_img_path
+
+                if dict_img_name == img_name:
+                    temp_data_dict = d
+                    # Update the annotations for this dataset_dicts entry
+                    boxes = outputs
+                    ann_list = temp_dataset_dict['annotations']
+                    ann_list[0]['bbox'].append(boxes)
+                    temp_data_dict['annotations'] = ann_list
+
+                    old_dataset_dicts = old_dataset_dicts[:idx] + \
+                        [temp_dataset_dict] + old_dataset_dicts[idx + 1:]
+
+                idx += 1
+
+
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
             total_compute_time += time.perf_counter() - start_compute_time
