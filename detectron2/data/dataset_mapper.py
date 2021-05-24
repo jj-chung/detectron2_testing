@@ -151,8 +151,14 @@ class DatasetMapper:
         # Parse the image name from the image path by taking the 
         # substring after the last /
         img_name = img_path[img_path.rindex("/")+1:]
-        prev_img_name = self.curr_to_prev_filename[img_name]
-        # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+
+        # Default prev_img_name if the key doesn't exist in curr_to_prev
+        # Necessary when creating the mapper for the test data
+        if img_name in curr_to_prev_filename:
+            prev_img_name = self.curr_to_prev_filename[img_name]
+            # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+        else:
+            prev_img_name = "no_prev_img"
 
         # Find the index of the previous image in the dataset_dicts list 
         i = self.dataset_dicts_index(self.dataset_dicts, prev_img_name)
@@ -223,8 +229,14 @@ class DatasetMapper:
         # Parse the image name from the image path by taking the 
         # substring after the last /
         img_name = img_path[img_path.rindex("/")+1:]
-        prev_img_name = self.curr_to_prev_filename[img_name]
-        # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+
+        # Default prev_img_name if the key doesn't exist in curr_to_prev
+        # Necessary when creating the mapper for the test data
+        if img_name in curr_to_prev_filename:
+            prev_img_name = self.curr_to_prev_filename[img_name]
+            # prev_img_id = self.curr_to_prev_img_id[str(img_id)]
+        else:
+            prev_img_name = "no_prev_img"
 
         # Find the index of the previous image in the dataset_dicts list 
         i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
@@ -235,7 +247,7 @@ class DatasetMapper:
         mask = np.zeros([height, width])
 
         if i == -1: # If the previous image is null 
-          print("Previous image is null.")
+          # print("Previous image is null.")
           return mask
         else: # If the previous image is not null
           # Get the dictionary and annotations

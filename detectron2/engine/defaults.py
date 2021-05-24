@@ -549,11 +549,12 @@ class DefaultTrainer(TrainerBase):
             curr_to_prev_filename = curr_to_prev_filename,
             curr_to_prev_img_id = curr_to_prev_img_id)
 
-        print(mapper.curr_to_prev_img_id)
+        # print(mapper.curr_to_prev_img_id)
         return build_detection_train_loader(cfg, mapper=mapper)
 
     @classmethod
-    def build_test_loader(cls, cfg, dataset_name):
+    def build_test_loader(cls, cfg, dataset_name, dataset_dicts, 
+        curr_to_prev_filename, curr_to_prev_img_id):
         """
         Returns:
             iterable
@@ -561,7 +562,18 @@ class DefaultTrainer(TrainerBase):
         It now calls :func:`detectron2.data.build_detection_test_loader`.
         Overwrite it if you'd like a different data loader.
         """
-        return build_detection_test_loader(cfg, dataset_name)
+        # return build_detection_test_loader(cfg, dataset_name)
+        
+        # Change function so the test loader takes the same format as the 
+        # train loader, i.e. takes additional arguments
+        # Note: dataset_dicts below won't have the correct bounding
+        # boxes before evaluating; need to change internal state
+        mapper = DatasetMapper(cfg,
+            dataset_dicts = dataset_dicts,
+            curr_to_prev_filename = curr_to_prev_filename,
+            curr_to_prev_img_id = curr_to_prev_filename)
+
+        return build_detection_test_loader(cfg, mapper=mapper)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name):
