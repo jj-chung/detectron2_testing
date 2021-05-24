@@ -7,6 +7,7 @@ from contextlib import ExitStack, contextmanager
 from typing import List, Union
 import torch
 from torch import nn
+import numpy
 
 from detectron2.utils.comm import get_world_size, is_main_process
 from detectron2.utils.logger import log_every_n_seconds
@@ -153,19 +154,24 @@ def inference_on_dataset(
             start_compute_time = time.perf_counter()
             ## outputs contains an 'instances' key w Instances(...fields = [pred_boxes:]) value
             outputs = model(inputs)
-            print('Printing outputs...')
-            print(outputs)
+
             instances_obj = outputs[0]['instances'] 
             boxes_tensor = instances_obj.pred_boxes
-            print('Printing boxes tensor and in list format...')
-            print(boxes_tensor)
-            boxes_list = boxes_tensor.tolist()
+            boxes_list = []
+            print('Printing boxes in list format...')
+            for i, box in enumerate(boxes_tensor):
+                print(box)
+                print(type(box))
+                print(box.tolist())
+                boxes_list.append(box.tolist())
+
             print(boxes_list)
 
             boxes_in_ann_format = []
             for box in boxes_list:
                 boxes_in_ann_format.append({'bbox': box})
 
+            print('Printing boxes in annotation list format...')
             print(boxes_in_ann_format)
 
             ## At this point, feed the outputs of the prediction to the 
@@ -173,6 +179,10 @@ def inference_on_dataset(
             ## the 'annotations' entry in the dataset_dicts field of the DatasetMapper
             img_filename = inputs[0]['file_name']
             old_dataset_dicts = data_loader.mapper.dataset_dicts
+
+            print('Printing img_filename and old_dataset_dicts...')
+            print(img_filename)
+            print(old_dataset_dicts)
 
             idx = 0
             for d in old_dataset_dicts:
