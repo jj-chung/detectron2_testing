@@ -157,14 +157,22 @@ def inference_on_dataset(
             print(outputs)
             instances_obj = outputs[0]['instances'] 
             boxes_tensor = instances_obj.pred_boxes
-            print('Printing boxes tensor...')
+            print('Printing boxes tensor and in list format...')
             print(boxes_tensor)
+            boxes_list = boxes_tensor.tolist()
+            print(boxes_list)
+
+            boxes_in_ann_format = []
+            for box in boxes_list:
+                boxes_in_ann_format.append({'bbox': box})
+
+            print(boxes_in_ann_format)
 
             ## At this point, feed the outputs of the prediction to the 
             ## DatasetMapper associated with the data_loader. Specifically change
             ## the 'annotations' entry in the dataset_dicts field of the DatasetMapper
             img_filename = inputs[0]['file_name']
-            old_dataset_dicts = data_loader.dataset_dicts
+            old_dataset_dicts = data_loader.mapper.dataset_dicts
 
             idx = 0
             for d in old_dataset_dicts:
@@ -175,9 +183,8 @@ def inference_on_dataset(
                 if dict_img_name == img_name:
                     temp_data_dict = d
                     # Update the annotations for this dataset_dicts entry
-                    boxes = outputs
                     ann_list = temp_dataset_dict['annotations']
-                    ann_list[0]['bbox'].append(boxes)
+                    ann_list.extend(boxes_in_ann_format)
                     temp_data_dict['annotations'] = ann_list
 
                     old_dataset_dicts = old_dataset_dicts[:idx] + \
