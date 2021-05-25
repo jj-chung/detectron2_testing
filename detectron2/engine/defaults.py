@@ -586,8 +586,7 @@ class DefaultTrainer(TrainerBase):
         return build_detection_train_loader(cfg, mapper=mapper)
 
     @classmethod
-    def build_test_loader(cls, cfg, dataset_name, dataset_dicts, 
-        curr_to_prev_filename, curr_to_prev_img_id):
+    def build_test_loader(cls, cfg, dataset_name):
         """
         Returns:
             iterable
@@ -601,12 +600,8 @@ class DefaultTrainer(TrainerBase):
         # train loader, i.e. takes additional arguments
         # Note: dataset_dicts below won't have the correct bounding
         # boxes before evaluating; need to change internal state
-        mapper = DatasetMapper(cfg,
-            dataset_dicts = dataset_dicts,
-            curr_to_prev_filename = curr_to_prev_filename,
-            curr_to_prev_img_id = curr_to_prev_filename)
 
-        return build_detection_test_loader(cfg, mapper=mapper)
+        return build_detection_test_loader(cfg, dataset_name)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name):
@@ -773,6 +768,7 @@ class MyTrainer(DefaultTrainer):
                      
     def build_hooks(self):
         hooks = super().build_hooks()
+        print(self.cfg.DATASETS.TEST[0])
         hooks.insert(-1,LossEvalHook(
             self.cfg.TEST.EVAL_PERIOD,
             self.model,
