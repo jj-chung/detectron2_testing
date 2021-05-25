@@ -52,6 +52,7 @@ from detectron2.data import DatasetMapper
 
 # import LossEvalHook class
 from . import LossEvalHook
+from detectron2.evaluation.coco_evaluation import COCOEvaluator
 
 __all__ = [
     "create_ddp_model",
