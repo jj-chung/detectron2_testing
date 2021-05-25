@@ -174,6 +174,7 @@ def inference_on_dataset(
             print('Printing boxes in annotation list format...')
             print(boxes_in_ann_format)
 
+            '''
             ## At this point, feed the outputs of the prediction to the 
             ## DatasetMapper associated with the data_loader. Specifically change
             ## the 'annotations' entry in the dataset_dicts field of the DatasetMapper
@@ -204,6 +205,7 @@ def inference_on_dataset(
                 idx += 1
 
             data_loader.mapper.dataset_dicts = old_dataset_dicts
+            '''
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()

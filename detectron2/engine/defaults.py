@@ -50,6 +50,9 @@ from .train_loop import AMPTrainer, SimpleTrainer, TrainerBase
 # import DatasetMapper class
 from detectron2.data import DatasetMapper
 
+# import LossEvalHook class
+from . import LossEvalHook
+
 __all__ = [
     "create_ddp_model",
     "default_argument_parser",
@@ -314,8 +317,7 @@ class DefaultPredictor:
                 the output of the model for one image only.
                 See :doc:`/tutorials/models` for details about the format.
         """
-        print('Printing original shape...')
-        print(original_image.shape)
+
         with torch.no_grad():  # https://github.com/sphinx-doc/sphinx/issues/4258
             # Apply pre-processing to image.
             if self.input_format == "RGB":
@@ -324,9 +326,6 @@ class DefaultPredictor:
             height, width = original_image.shape[:2]
             image = self.aug.get_transform(original_image).apply_image(original_image)
             image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))
-            print('Printing DefaultPredicor image and size...')
-            print(image)
-            print(list(image.size()))
 
             ## May need to change the format of image to match the updated model which
             ## only accepts 4 channel images.
@@ -761,3 +760,25 @@ for _attr in ["model", "data_loader", "optimizer"]:
             lambda self, value, x=_attr: setattr(self._trainer, x, value),
         ),
     )
+
+
+
+class MyTrainer(DefaultTrainer):
+    @classmethod
+    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+        if output_folder is None:
+            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+        return COCOEvaluator(dataset_name, cfg, True, output_folder)
+                     
+    def build_hooks(self):
+        hooks = super().build_hooks()
+        hooks.insert(-1,LossEvalHook(
+            cfg.TEST.EVAL_PERIOD,
+            self.model,
+            build_detection_test_loader(
+                self.cfg,
+                self.cfg.DATASETS.TEST[0],
+                DatasetMapper(self.cfg,True)
+            )
+        ))
+        return hooks
