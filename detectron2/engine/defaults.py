@@ -60,6 +60,7 @@ __all__ = [
     "default_writers",
     "DefaultPredictor",
     "DefaultTrainer",
+    "MyTrainer",
 ]
 
 
