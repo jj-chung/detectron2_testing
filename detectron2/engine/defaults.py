@@ -769,7 +769,6 @@ class MyTrainer(DefaultTrainer):
                      
     def build_hooks(self):
         hooks = super().build_hooks()
-        print(self.cfg.DATASETS.TEST[0])
         hooks.insert(-1,LossEvalHook(
             self.cfg.TEST.EVAL_PERIOD,
             self.model,

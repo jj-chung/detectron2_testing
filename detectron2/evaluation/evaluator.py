@@ -155,6 +155,7 @@ def inference_on_dataset(
             ## outputs contains an 'instances' key w Instances(...fields = [pred_boxes:]) value
             outputs = model(inputs)
 
+            '''
             instances_obj = outputs[0]['instances'] 
             boxes_tensor = instances_obj.pred_boxes
             boxes_list = []
@@ -174,7 +175,7 @@ def inference_on_dataset(
             print('Printing boxes in annotation list format...')
             print(boxes_in_ann_format)
 
-            '''
+            
             ## At this point, feed the outputs of the prediction to the 
             ## DatasetMapper associated with the data_loader. Specifically change
             ## the 'annotations' entry in the dataset_dicts field of the DatasetMapper
