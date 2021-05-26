@@ -775,7 +775,7 @@ class MyTrainer(DefaultTrainer):
             build_detection_test_loader(
                 self.cfg,
                 self.cfg.DATASETS.TEST[0],
-                DatasetMapper(self.cfg,True)
+                mapper=DatasetMapper(self.cfg,True)
             )
         ))
         return hooks
