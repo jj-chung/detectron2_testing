@@ -769,7 +769,8 @@ class MyTrainer(DefaultTrainer):
         return COCOEvaluator(dataset_name, cfg, True, output_folder)
                      
     def build_hooks(self):
-        mapper = DatasetMapper(cfg, 
+        mapper = DatasetMapper(
+            self.cfg, 
             dataset_dicts={}, 
             curr_to_prev_filename = {},
             curr_to_prev_img_id = {})
