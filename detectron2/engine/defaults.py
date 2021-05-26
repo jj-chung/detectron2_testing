@@ -779,8 +779,9 @@ class MyTrainer(DefaultTrainer):
             self.cfg.TEST.EVAL_PERIOD,
             self.model,
             build_detection_test_loader(
+                # Dataset name is required
+                self.cfg.DATASETS.TEST[0],
                 self.cfg,
-                # self.cfg.DATASETS.TEST[0],
                 mapper = mapper
                 # mapper=DatasetMapper(self.cfg,True)
             )
