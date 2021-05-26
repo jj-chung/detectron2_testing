@@ -48,7 +48,8 @@ from . import hooks
 from .train_loop import AMPTrainer, SimpleTrainer, TrainerBase
 
 # import DatasetMapper class
-from detectron2.data import DatasetMapper
+# from detectron2.data import DatasetMapper
+from detectron2.data.dataset_mapper import DatasetMapper
 
 # import LossEvalHook class
 from . import LossEvalHook
