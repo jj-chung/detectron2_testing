@@ -769,6 +769,10 @@ class MyTrainer(DefaultTrainer):
         return COCOEvaluator(dataset_name, cfg, True, output_folder)
                      
     def build_hooks(self):
+        mapper = DatasetMapper(cfg, 
+            dataset_dicts={}, 
+            curr_to_prev_filename = {},
+            curr_to_prev_img_id = {})
         hooks = super().build_hooks()
         hooks.insert(-1,LossEvalHook(
             self.cfg.TEST.EVAL_PERIOD,
@@ -776,7 +780,8 @@ class MyTrainer(DefaultTrainer):
             build_detection_test_loader(
                 self.cfg,
                 self.cfg.DATASETS.TEST[0],
-                mapper=DatasetMapper(self.cfg,True)
+                mapper = mapper
+                # mapper=DatasetMapper(self.cfg,True)
             )
         ))
         return hooks
