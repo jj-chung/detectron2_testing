@@ -780,7 +780,7 @@ class MyTrainer(DefaultTrainer):
             self.model,
             build_detection_test_loader(
                 self.cfg,
-                self.cfg.DATASETS.TEST[0],
+                # self.cfg.DATASETS.TEST[0],
                 mapper = mapper
                 # mapper=DatasetMapper(self.cfg,True)
             )
